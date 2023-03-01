@@ -132,6 +132,7 @@ def run_prosail(
                 "If rsoil0 isn't define, then rsoil and psoil"
                 " need to be defined!"
             )
+    else:
         rsoil0 = rsoil * (
             psoil * soil_spectrum1 + (1.0 - psoil) * soil_spectrum2
         )
@@ -145,7 +146,7 @@ def run_prosail(
         cm,
         ant=ant,
         prot=prot,
-        cbc=prot,
+        cbc=cbc,
         prospect_version=prospect_version,
         alpha=alpha,
     )
@@ -312,6 +313,7 @@ def run_sail(
                 "If rsoil0 isn't define, then rsoil and psoil"
                 " need to be defined!"
             )
+    else:
         rsoil0 = rsoil * (
             psoil * soil_spectrum1 + (1.0 - psoil) * soil_spectrum2
         )
@@ -460,7 +462,8 @@ def run_thermal_sail(
     gammad = 1.0 - rdd - tdd
     gammao = 1.0 - rdo - tdo - too
 
-    tso = tss * too + tss * (tdo + rsoil * rdd * too) / (1.0 - rsoil * rdd)
+    # tso = tss * too + tss * (tdo + rsoil * rdd * too) / (1.0 - rsoil * rdd)
+    tso = tsstoo + tss * (tdo + rsoil * rdd * too) / (1.0 - rsoil * rdd)
     ttot = (too + tdo) / (1.0 - rsoil * rdd)
     gammaot = gammao + ttot * rsoil * gammad
     gammasot = gammaso + ttot * rsoil * gammasdf
@@ -469,7 +472,7 @@ def run_thermal_sail(
     aees = ttot * ems
 
     Lw = (
-        rdot * Hsky
+        (rdot * Hsky) / np.pi
         + (
             aeev * Hc
             + gammasot * emv * (Hh - Hc)
