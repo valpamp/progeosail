@@ -1,5 +1,8 @@
 # PROGEOSAIL Python Bindings
 
+[![PyPI version](https://img.shields.io/pypi/v/progeosail.svg)](https://pypi.org/project/progeosail/)
+[![Python versions](https://img.shields.io/pypi/pyversions/progeosail.svg)](https://pypi.org/project/progeosail/)
+
 #### Valerio Pampanoni, mailto: ``valerio.pampanoni@uniroma1.it`` (Institutional), ``valerio.pampanoni@pm.me`` (Personal)
 
 ## Repo Description
