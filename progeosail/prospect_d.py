@@ -8,7 +8,7 @@ Thanks for @jajberni for ProspectPRO implementation!
 import numpy as np
 from scipy.special import expi
 
-from prosail import spectral_lib
+from progeosail import spectral_lib
 
 
 def run_prospect(
@@ -334,18 +334,18 @@ def prospect_d(
 
 ###if __name__ == "__main__":
 
-###k_cab = prosail.spectral_libs.k_cab
-###k_w = prosail.spectral_libs.k_cw
-###k_m = prosail.spectral_libs.k_cm
-###k_car = prosail.spectral_libs.k_car
-###k_brown = prosail.spectral_libs.k_brown
-###nr = prosail.spectral_libs.refractive
+###k_cab = progeosail.spectral_libs.k_cab
+###k_w = progeosail.spectral_libs.k_cw
+###k_m = progeosail.spectral_libs.k_cm
+###k_car = progeosail.spectral_libs.k_car
+###k_brown = progeosail.spectral_libs.k_brown
+###nr = progeosail.spectral_libs.refractive
 
 ###wv, r, t = prospect_d (2.1, 60., 10., 0.1, 0.013, 0.016, 0,
 ###nr, k_cab, k_car, k_brown, k_w, k_m, k_m*0.,
 ###alpha=40.)
 
-###rt = prosail.prospect_5b(2.1, 60., 10., 0.1, 0.013, 0.016)
+###rt = progeosail.prospect_5b(2.1, 60., 10., 0.1, 0.013, 0.016)
 ###plt.plot(wv, r-rt[:,0], '--')
 ###plt.plot(wv, t-rt[:,1], '--')
 
@@ -353,6 +353,6 @@ def prospect_d(
 ###nr, k_cab, k_car, k_brown, k_w, k_m, k_m*0.,
 ###alpha=40.)
 ####    plt.plot(wv, r)
-###rt = prosail.prospect_5b(2.1, 10., 10., 0.1, 0.013, 0.016)
+###rt = progeosail.prospect_5b(2.1, 10., 10., 0.1, 0.013, 0.016)
 ###plt.plot(wv, r-rt[:,0], '-')
 ###plt.plot(wv, t-rt[:,1], '-')

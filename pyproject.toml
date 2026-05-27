@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "progeosail"
+dynamic = ["version"]
+description = "PROSPECT, SAIL, PROSAIL, and GeoSail radiative transfer models"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "GPL-3.0-only"
+authors = [
+  { name = "Jose Gomez-Dans", email = "j.gomez-dans@ucl.ac.uk" },
+  { name = "Valerio Pampanoni" },
+]
+keywords = [
+  "remote sensing",
+  "radiative transfer",
+  "PROSPECT",
+  "SAIL",
+  "PROSAIL",
+  "GeoSail",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: End Users/Desktop",
+  "Intended Audience :: Science/Research",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Atmospheric Science",
+  "Topic :: Scientific/Engineering :: GIS",
+  "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = [
+  "numpy",
+  "numba",
+  "scipy",
+]
+
+[project.optional-dependencies]
+test = [
+  "flake8",
+  "pytest",
+  "setuptools>=77",
+]
+build = [
+  "build",
+  "twine",
+]
+
+[project.urls]
+Homepage = "https://github.com/valpamp/progeosail"
+Repository = "https://github.com/valpamp/progeosail"
+"Original prosail project" = "https://github.com/jgomezdans/prosail"
+
+[tool.setuptools]
+packages = ["progeosail"]
+
+[tool.setuptools.dynamic]
+version = { attr = "progeosail.__version__" }
+
+[tool.setuptools.package-data]
+progeosail = ["*.txt"]

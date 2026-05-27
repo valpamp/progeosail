@@ -1,27 +1,17 @@
 import numpy as np
 import os
-import prosail
+import progeosail
 from pytest import fixture
-from distutils import dir_util
 
 
 @fixture
-def datadir(tmpdir, request):
-    """
-    Fixture responsible for locating the test data directory and copying it
-    into a temporary directory.
-    Taken from  http://www.camillescott.org/2016/07/15/travis-pytest-scipyconf/
-    """
+def datadir(request):
     filename = request.module.__file__
     test_dir = os.path.dirname(filename)
     data_dir = os.path.join(test_dir, "data")
-    dir_util.copy_tree(data_dir, str(tmpdir))
 
-    def getter(filename, as_str=True):
-        filepath = tmpdir.join(filename)
-        if as_str:
-            return str(filepath)
-        return filepath
+    def getter(filename):
+        return os.path.join(data_dir, filename)
 
     return getter
 
@@ -29,7 +19,7 @@ def datadir(tmpdir, request):
 def test_rsot_prosail5(datadir):
     fname = datadir("REFL_CAN.txt")
     w, resv, rdot, rsot, rddt, rsdt = np.loadtxt(fname, unpack=True)
-    rr = prosail.run_prosail(
+    rr = progeosail.run_prosail(
         1.5,
         40.0,
         8.0,
@@ -54,7 +44,7 @@ def test_rsot_prosail5(datadir):
 def test_rdot_prosail5(datadir):
     fname = datadir("REFL_CAN.txt")
     w, resv, rdot, rsot, rddt, rsdt = np.loadtxt(fname, unpack=True)
-    rr = prosail.run_prosail(
+    rr = progeosail.run_prosail(
         1.5,
         40.0,
         8.0,
@@ -79,7 +69,7 @@ def test_rdot_prosail5(datadir):
 def test_rddt_prosail5(datadir):
     fname = datadir("REFL_CAN.txt")
     w, resv, rdot, rsot, rddt, rsdt = np.loadtxt(fname, unpack=True)
-    rr = prosail.run_prosail(
+    rr = progeosail.run_prosail(
         1.5,
         40.0,
         8.0,
@@ -104,7 +94,7 @@ def test_rddt_prosail5(datadir):
 def test_rsdt_prosail5(datadir):
     fname = datadir("REFL_CAN.txt")
     w, resv, rdot, rsot, rddt, rsdt = np.loadtxt(fname, unpack=True)
-    rr = prosail.run_prosail(
+    rr = progeosail.run_prosail(
         1.5,
         40.0,
         8.0,

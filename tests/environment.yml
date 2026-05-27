@@ -1,4 +1,4 @@
-name: prosail
+name: progeosail
 channels:
     - conda-forge
 dependencies:

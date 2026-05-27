@@ -1,10 +1,10 @@
 package:
-  name: prosail
+  name: progeosail
   version: 2.0.4
   
 source:
   git_tag: 2.0.4
-  git_url: http://github.com/jgomezdans/prosail.git
+  git_url: https://github.com/valpamp/progeosail.git
 
 requirements:
   build:
@@ -24,9 +24,9 @@ requirements:
 
 test:
   imports:
-    - prosail
+    - progeosail
 
 about:
-  home: http://github.com/jgomezdans/prosail
+  home: https://github.com/valpamp/progeosail
   license: GPLv3
   summary: "The PROSPECT and SAIL radiative transfer models"

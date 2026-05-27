@@ -1,10 +1,10 @@
-# PROGEOSAIL Python Bindings WORK IN PROGRESS
+# PROGEOSAIL Python Bindings
 
 #### Valerio Pampanoni, mailto: ``valerio.pampanoni@uniroma1.it`` (Institutional), ``valerio.pampanoni@pm.me`` (Personal)
 
 ## Repo Description
 
-This is a fork of the [jgomezdans/prosail](https://github.com/jgomezdans/prosail) Python bindings to the PROSPECT [1] and SAIL [2] leaf and canopy reflectance models. In addition to the features provided by the original code, I have ported over functions of Huemmrich's GeoSail model [3, 4], which exploits Jasinski's geometric model [5] to represent discontinuous vegetation canopies. At the moment, the `geocone` and `geocily` functions are available to model cone-shaped and square cylinder-shaped trees respectively, but feel free to open a PR and implement more shapes.
+This is a fork of the [jgomezdans/prosail](https://github.com/jgomezdans/prosail) Python bindings to the PROSPECT [1] and SAIL [2] leaf and canopy reflectance models. In addition to the features provided by the original code, I have ported over functions of Huemmrich's GeoSail model [3, 4], which exploits Jasinski's geometric model [5] to represent discontinuous vegetation canopies. The `geocone` and `geocyli` functions are available to model cone-shaped and cylindrical trees respectively. The legacy spelling `geocily` is also exported as an alias.
 
 The default spectrum supported by this module falls between 400 and 2500 nm, with a spacing of 1 nm.
 
@@ -15,7 +15,7 @@ The bindings implement the following models:
 * **GEO**: GEO part of Huemmrich's GeoSail code.
 * Simple Lambertian soil reflectance model
 
-Furthermore, I have completely re-written the parameter intervals, which were wrong in the original README, and refer you to paragraphs 3.1.1, 3.1.2 and 3.1.3 of [my PhD thesis](https://iris.uniroma1.it/handle/11573/1666953) for a detailed explanation of the meaning of each PROSPECT-D, 4SAIL and GEO variable respectively. The values are mostly sourced from [12], but you can find similar values in [13]. At the end of the README you can also find a small bibliography regarding the radiative transfer models, and another section about their usage for Live Fuel Moisture Content estimation.
+Furthermore, I have completely re-written the parameter boundaries, and refer you to paragraphs 3.1.1, 3.1.2 and 3.1.3 of [my PhD thesis](https://iris.uniroma1.it/handle/11573/1666953) for a detailed explanation of the meaning of each PROSPECT-D, 4SAIL and GEO variable respectively. The values are mostly sourced from [12], but you can find similar values in [13]. At the end of the README you can also find a small bibliography regarding the radiative transfer models, and another section about their usage for Live Fuel Moisture Content estimation.
 
 ## Using the bindings
 
@@ -31,6 +31,9 @@ The progeosail module contains the following functions:
 * `run_sail`
 * `run_prosail`
 * `run_progeosail`
+* `geocone`
+* `geocyli`
+* `geocily`, a backwards-compatible alias of `geocyli`
 
 We will now go through each function individually.
 
@@ -50,13 +53,13 @@ PROSPECT returns leaf reflectance and transmittance based on the biochemical cha
 
 In order to run PROSPECT-D we will have to call the `run_prospect` function and supply the anthocyanin pigment concentration (ant) as a keyword argument in addition to the leaf structure parameter (n), chlorophyll a and b concentration (cab), carotenoid pigment concentration (car), brown pigment (cbrown), water thickness (cw) and dry matter content (cm) as positional arguments:
 
-    wv, rho, tau = prosail.run_prospect(n, cab, car, cbrown, cw, cm, ant=8.0)
+    wv, rho, tau = progeosail.run_prospect(n, cab, car, cbrown, cw, cm, ant=8.0)
 
 Where `rho` and `tau` represent the , leaf reflectance and transmittance spectra respectively, and `wv` the wavelengths at which they were calculated.
 
 In order to run PROSPECT-5, the `prospect_version` keyword argument must be supplied and must be set to `'5'`, while there is no need to supply the anthocyanin content, since it is not included in the model:
 
-    lam, rho, tau = prosail.run_prospect(n, cab, car, cbrown, cw, cm, prospect_version='5')
+    lam, rho, tau = progeosail.run_prospect(n, cab, car, cbrown, cw, cm, prospect_version='5')
 
 ### The SAIL Model and the `run_sail` Function
 
@@ -141,21 +144,21 @@ SAIL expects the user to set the following three angular parameters:
 
 To run SAIL with two one-dimensional arrays of leaf reflectance and transmittance sampled with a 1 nm spacing between 400 and 2500 nm `rho` and `tau`, using an ideal black soil (e.g. zero reflectance), we can use the following command:
 
-    rho_canopy = prosail.run_sail(rho, tau, lai, lidfa, hspot, sza, vza, raa, rsoil0=np.zeros(2101))
+    rho_canopy = progeosail.run_sail(rho, tau, lai, lidfa, hspot, sza, vza, raa, rsoil0=np.zeros(2101))
 
 As explained in the previous sections, the user may:
 
 * use a Verhoef-style two-parameter LIDF:
 
-        rho_canopy = prosail.run_sail(rho, tau, lai, lidfa, hspot, sza, vza, raa, lidftype=1, lidfb=lidfb, rsoil0=np.zeros(2101))
+        rho_canopy = progeosail.run_sail(rho, tau, lai, lidfa, hspot, sza, vza, raa, lidftype=1, lidfb=lidfb, rsoil0=np.zeros(2101))
 
 * use `psoil` and `rsoil` to mix the default spectra:
 
-        rho_canopy = prosail.run_sail(rho, tau, lai, lidfa, hspot, sza, vza, raa, lidftype=1, lidfb=lidfb, rsoil=rsoil, psoil=psoil)
+        rho_canopy = progeosail.run_sail(rho, tau, lai, lidfa, hspot, sza, vza, raa, lidftype=1, lidfb=lidfb, rsoil=rsoil, psoil=psoil)
 
 * re-assign the `soil_spectrum1` and `soil_spectrum2` keywords to supply custom soil spectra and mix them using the `psoil` and `rsoil` keywords:
 
-        rho_canopy = prosail.run_sail(rho, tau, lai, lidfa, hspot, sza, vza, raa, lidftype=1, lidfb=lidfb, rsoil, psoil, soil_spectrum1=custom_soil1, soil_spectrum2=custom_soil2)
+        rho_canopy = progeosail.run_sail(rho, tau, lai, lidfa, hspot, sza, vza, raa, lidftype=1, lidfb=lidfb, rsoil, psoil, soil_spectrum1=custom_soil1, soil_spectrum2=custom_soil2)
 
 By default, `run_sail` returns the surface directional reflectance (SDR), but you can choose other reflectance factors by setting using the `factor` keyword argument to the appropriate value:
 
@@ -178,11 +181,11 @@ As anticipated, PROSPECT's output in terms of leaf reflectance and transmittance
 
 The `run_prosail` function can be used to run the combination of PROSPECT-5 or PROSPECT-D and SAIL in one step:
 
-    rho_canopy = prosail.run_prosail(n, cab, car, cbrown, cw, cm, lai, lidfa, hspot, tts, tto, psi)
+    rho_canopy = progeosail.run_prosail(n, cab, car, cbrown, cw, cm, lai, lidfa, hspot, tts, tto, psi)
 
 ### ProGeoSail and the `run_progeosail` Function
 
-In 2001 [3], the SAIL model was coupled with the Jasinski Geometric model (GEO) with the objective to allow the description of radiation reflected by and transmitted through discontinuous vegetation. In order to port this functionality to `pyprosail`, we rewrote the Fortran subroutines `GEOCONE` and `GEOCILY` to Python, and interfaced them with the existing PROSAIL functions. At the moment, only nadir view is supported, and for this reason only the Sun Zenith Angle is included in the input variables, while the Viewing Zenith Angle is assumed to be zero.
+In 2001 [3], the SAIL model was coupled with the Jasinski Geometric model (GEO) with the objective to allow the description of radiation reflected by and transmitted through discontinuous vegetation. In order to port this functionality to `pyprosail`, we rewrote the Fortran subroutines `GEOCONE` and `GEOCYLI` to Python, and interfaced them with the existing PROSAIL functions. At the moment, only nadir view is supported, and for this reason only the Sun Zenith Angle is included in the input variables, while the Viewing Zenith Angle is assumed to be zero.
 
 | Parameter   | Description                                    | Units |
 |-------------|------------------------------------------------|-------|
@@ -192,15 +195,24 @@ In 2001 [3], the SAIL model was coupled with the Jasinski Geometric model (GEO) 
 | `rch`       | Hemispheric reflectance through canopy         | -     |
 | `chw`       | Canopy height-to-width ratio                   |  m/m  |
 | `ccover`    | Fraction of Canopy Cover                       | m^2/m^2 |
-|  `cshp`     | Crown Shape                                    | -       |  
+|  `cshp`     | Crown Shape                                    | -       |
 
-The reflectance and transmittance spectra are all supplied by SAIL. If the Observer Zenith Angle `tto` is set to zero (nadir view), the hemispherical-directional reflectance and transmittance through the canopy will correspond to `rc` and `tc` respectively, while the bi-hemispherical reflectance factor will correspond to `rch`. The `cshp` parameter allows to set the tree shape among the two currently supported, which are `'cylinder'` and '`cone`'. More can be implemented following the methodology described in [5].
+The reflectance and transmittance spectra are all supplied by SAIL. If the Observer Zenith Angle `tto` is set to zero (nadir view), the hemispherical-directional reflectance and transmittance through the canopy will correspond to `rc` and `tc` respectively, while the bi-hemispherical reflectance factor will correspond to `rch`. The `cshp` parameter allows to set the tree shape among the two currently supported, which are `'cylinder'` and `'cone'`. More can be implemented following the methodology described in [5].
 
 A minimal `run_progeosail` run would look like this:
 
-    rho_canopy = prosail.run_progeosail(chw, ccover, cshp, 
-                                        n, cab, car, cbrown, cw, cm, \
-                                        lai, lidfa, hspot, tts, tto, psi)
+    rsc, gsfr = progeosail.run_progeosail(chw, ccover, cshp,
+                                          n, cab, car, cbrown, cw, cm,
+                                          lai, lidfa, hspot, tts, tto, psi)
+
+`run_progeosail` returns a tuple `(rsc, gsfr)`, where `rsc` is the scene reflectance spectrum and `gsfr` is Huemmrich's instantaneous fraction of absorbed radiation. When the input band corresponds to PAR wavelengths, `gsfr` can be interpreted as FAPAR.
+
+The two geometric GeoSail functions can also be used directly if the crown optical properties have already been calculated. Both functions return the same `(rsc, gsfr)` tuple:
+
+    rsc, gsfr = progeosail.geocone(chw, ccover, tts, rc, tc, rch, rsoil0)
+    rsc, gsfr = progeosail.geocyli(chw, ccover, tts, rc, tc, rch, rsoil0)
+
+where `rc` is the nadir-view crown reflectance, `tc` is the crown transmittance, `rch` is the hemispherical crown reflectance, and `rsoil0` is the background reflectance. `rsc` and `gsfr` can be scalars or spectra, depending on whether scalar reflectance values or wavelength arrays are supplied.
 
 ### Bibliography
 [1] [S. Jacquemoud and F. Baret, PROSPECT: A model of leaf optical properties spectra, Remote sensing of environment, 34 (1990), pp. 75–91](https://www.sciencedirect.com/science/article/abs/pii/003442579090100Z)

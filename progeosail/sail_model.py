@@ -1,10 +1,19 @@
 #!/usr/bin/env python
 import numpy as np
 
-from prosail import spectral_lib
+from progeosail import spectral_lib
 
 from .FourSAIL import foursail
 from .prospect_d import run_prospect
+
+
+def _diffuse_interceptance(chw, ccover):
+    """Average crown interceptance over 0-90 degrees, following Huemmrich."""
+    rdeg = np.arange(10, dtype=float) * 10.0
+    rdeg[-1] = 89.9999
+    e1 = chw * np.tan(np.radians(rdeg))
+    return np.mean(1.0 - (1.0 - ccover) ** (e1 + 1.0))
+
 
 def geocone(chw, ccover, tts, rc, tc, rch, rsoil0):
     '''
@@ -58,14 +67,19 @@ def geocone(chw, ccover, tts, rc, tc, rch, rsoil0):
     # (illuminated crown, illuminated background, shadowed background)
     # weighted by their fractions in the scene
     rsc = ccover*(1. - fcsh)*rc + (ccover*fcsh)*rcsh + sfrac*rssh + ilsoil*rsoil0
-    # !!! For now we do not implement the fraction of absorbed radiation
-    gsfr = 0
+    difint = _diffuse_interceptance(chw, ccover)
+    gsfr = (
+        (1.0 - tc)
+        * ((ccover + sfrac) + (ilsoil * rsoil0 * difint) + (sfrac * rssh * difint))
+        + (ccover * (rssh - rch))
+    )
+    gsfr = np.minimum(gsfr, 1.0)
     return rsc, gsfr
 
 def geocyli(chw, ccover, tts, rc, tc, rch, rsoil0):
     '''
-    Huemmrich-style Jasinski function for the ``cone`` shape.
-    In the ``cone`` case, the scene reflectance is calculated as the sum of the 
+    Huemmrich-style Jasinski function for the ``cylinder`` shape.
+    In the ``cylinder`` case, the scene reflectance is calculated as the sum of the 
     component reflectances of the illuminated and shadow portions of the 
     background and of the canopy. In the ``cylinder`` case, the contribution of
     the shadowed crown is neglected, because it is assumed to be quantitatively 
@@ -109,9 +123,16 @@ def geocyli(chw, ccover, tts, rc, tc, rch, rsoil0):
     # (illuminated crown, illuminated background, shadowed background)
     # weighted by their fractions in the scene
     rsc = ccover*rc + sfrac*rssh + ilsoil*rsoil0
-    # !!! For now we do not implement the fraction of absorbed radiation
-    gsfr = 0
+    difint = _diffuse_interceptance(chw, ccover)
+    gsfr = (
+        (1.0 - tc)
+        * ((ccover + sfrac) + (ilsoil * rsoil0 * difint) + (sfrac * rssh * difint))
+        + (ccover * (rssh - rch))
+    )
+    gsfr = np.minimum(gsfr, 1.0)
     return rsc, gsfr
+
+geocily = geocyli
 
 def run_prosail(n, cab, car,  cbrown, cw, cm, lai, lidfa, hspot,
                 tts, tto, psi, ant=0.0, alpha=40., prospect_version="5", 
